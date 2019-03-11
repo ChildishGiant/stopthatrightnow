@@ -40,7 +40,7 @@ textarea {
 
         <div id="rows">
             <div>
-                <h3>Type / paste your text here</h3>
+                <h3>Type / paste your text here</h3> <input type="checkbox" id="style" onchange="mock(document.getElementById('in').value)"> <label for="style">Every other</label>
                 <textarea id="in"></textarea>
 
                 <h3>Click your mocking text below to copy to your clipboard</h3>
@@ -75,7 +75,32 @@ function mock (text) {
     ctx.font = fontSize + "px Anton";
     ctx.lineWidth = lineWidth;
 
-    text = output.value = text.split("").map(tweak).join("");
+    // If the every other checkbox is ticked
+    if (document.getElementById("style").checked) {
+
+        var s = ""
+        // Randomise if we start capitalised or not
+        var count = Math.round(Math.random());
+
+        for (let i = 0; i < text.length; i++) {
+            code = text.charCodeAt(i);
+            // If the character is alphabetical
+            if ( ((code >= 97) && (code <= 122)) || ((code >= 65) && (code <= 90)) ) {
+                // Capitalise every other character
+                s += count % 2 == 0 ? text[i].toLowerCase() : text[i].toUpperCase();
+                count++;
+            // Character isn't alpha
+            } else {
+                // Add it as is
+                s += text[i];
+            }
+        };
+
+        text = output.value = s;
+
+    } else {
+        text = output.value = text.split("").map(tweak).join("");
+    }
 
     var m = text.match(/([^\n]+(?:\n[^\n]+)*)?(\n(?:\n[^\n]+)*)?/);
     var top = m[1] ? m[1] : "";
@@ -111,7 +136,7 @@ img.addEventListener("load", function (e) {
 });
 
 function clipboard () {
-    output.select(); 
+    output.select();
     try {
         if (document.execCommand('copy')) {
             document.getElementById("clipboard-success").style.display = "block";
